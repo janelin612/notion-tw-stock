@@ -1,0 +1,23 @@
+name: Sync
+on:
+  schedule:
+    # 13:40(UTC+8) Mon~Fri
+    - cron: "40 5 * * 1-5"
+  workflow_dispatch:
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14.x"
+      - run: npm install
+      - name: Export variables
+        env:
+          NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
+          DATABASE_ID: ${{ secrets.DATABASE_ID }}
+        run: |
+          echo "NOTION_API_KEY=$NOTION_API_KEY" >> .env 
+          echo "DATABASE_ID=$DATABASE_ID" >> .env
+      - run: npm run execute
