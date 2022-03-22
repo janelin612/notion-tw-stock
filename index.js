@@ -27,6 +27,5 @@ import "dotenv/config";
     let props = {};
     props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
     await Notion.updateStock(item.id, props);
-    console.log(`${code} : ${price}`);
   });
 })();
