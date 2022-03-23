@@ -1,8 +1,8 @@
 name: Sync
 on:
   schedule:
-    # 13:40(UTC+8) Mon~Fri
-    - cron: "40 5 * * 1-5"
+    # 13:33(UTC+8) Mon~Fri
+    - cron: "33 5 * * 1-5"
   workflow_dispatch:
 jobs:
   execute:
