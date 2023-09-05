@@ -22,10 +22,14 @@ import "dotenv/config";
   const FIELD_NAME_PRICE = "現價";
   lists.forEach(async (item) => {
     let code = item.properties.Code.title[0].plain_text;
-    let price = resp.msgArray.find((item) => item.c == code).z;
-    item.properties[FIELD_NAME_PRICE].number = parseFloat(price);
-    let props = {};
-    props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
-    await Notion.updateStock(item.id, props);
+    let stockObj = resp.msgArray.find((item) => item.c == code);
+    // prevent null
+    if (stockObj) {
+      let price = stockObj.z;
+      item.properties[FIELD_NAME_PRICE].number = parseFloat(price);
+      let props = {};
+      props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
+      await Notion.updateStock(item.id, props);
+    }
   });
 })();
