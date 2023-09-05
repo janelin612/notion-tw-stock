@@ -4,32 +4,27 @@ import "dotenv/config";
 
 (async () => {
   let lists = await Notion.getStocks(process.env.DATABASE_ID);
-  let stocks = lists
-    .map((item) => "tse_" + item.properties.Code.title[0].plain_text + ".tw")
-    .join("|");
-
-  let params = new URLSearchParams();
-  params.append("delay", 0);
-  params.append("json", 1);
-  params.append("ex_ch", stocks);
-
-  let resp = await (
-    await fetch(
-      "https://mis.twse.com.tw/stock/api/getStockInfo.jsp?" + params.toString()
-    )
-  ).json();
 
   const FIELD_NAME_PRICE = "現價";
   lists.forEach(async (item) => {
     let code = item.properties.Code.title[0].plain_text;
-    let stockObj = resp.msgArray.find((item) => item.c == code);
-    // prevent null
-    if (stockObj) {
-      let price = stockObj.z;
-      item.properties[FIELD_NAME_PRICE].number = parseFloat(price);
-      let props = {};
-      props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
-      await Notion.updateStock(item.id, props);
-    }
+
+    const result = await callStockApi(code);
+    let price = result.closePrice;
+    item.properties[FIELD_NAME_PRICE].number = parseFloat(price);
+    let props = {};
+    props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
+    await Notion.updateStock(item.id, props);
   });
 })();
+
+async function callStockApi(stockCode) {
+  const API_KEY = process.env.FUGLE_API_KEY;
+  const endpoint = "https://api.fugle.tw/marketdata/v1.0/stock/intraday/quote/";
+  const resp = await fetch(endpoint + stockCode, {
+    headers: {
+      "X-API-KEY": API_KEY,
+    },
+  });
+  return await resp.json();
+}

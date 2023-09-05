@@ -17,7 +17,9 @@ jobs:
         env:
           NOTION_API_KEY: ${{ secrets.NOTION_API_KEY }}
           DATABASE_ID: ${{ secrets.DATABASE_ID }}
+          FUGLE_API_KEY: ${{ secrets.FUGLE_API_KEY }}
         run: |
           echo "NOTION_API_KEY=$NOTION_API_KEY" >> .env 
           echo "DATABASE_ID=$DATABASE_ID" >> .env
+          echo "FUGLE_API_KEY=$FUGLE_API_KEY" >> .env
       - run: npm run execute
