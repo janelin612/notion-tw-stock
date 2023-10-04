@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import Notion from "./lib/Notion.js";
 import "dotenv/config";
 
