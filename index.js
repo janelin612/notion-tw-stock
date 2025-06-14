@@ -9,7 +9,7 @@ import "dotenv/config";
     let code = item.properties.Code.title[0].plain_text;
 
     const result = await callStockApi(code);
-    let price = result.closePrice;
+    let price = result.closePrice ? result.closePrice : result.previousClose;
     item.properties[FIELD_NAME_PRICE].number = parseFloat(price);
     let props = {};
     props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
