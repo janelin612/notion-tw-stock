@@ -5,15 +5,19 @@ import "dotenv/config";
   let lists = await Notion.getStocks(process.env.DATABASE_ID);
 
   const FIELD_NAME_PRICE = "現價";
+  const FIELD_NAME_CODE = "Code";
+
   lists.forEach(async (item) => {
-    let code = item.properties.Code.title[0].plain_text;
+    let code = item.properties[FIELD_NAME_CODE].title[0].plain_text;
 
     const result = await callStockApi(code);
     let price = result.closePrice ? result.closePrice : result.previousClose;
+    let icon =
+      price >= result.previousClose ? Notion.icon.UP : Notion.icon.DOWN;
     item.properties[FIELD_NAME_PRICE].number = parseFloat(price);
     let props = {};
     props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
-    await Notion.updateStock(item.id, props);
+    await Notion.updateStock(item.id, icon, props);
   });
 })();
 
