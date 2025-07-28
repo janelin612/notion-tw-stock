@@ -12,12 +12,12 @@ import "dotenv/config";
 
     const result = await callStockApi(code);
     let price = result.closePrice ? result.closePrice : result.previousClose;
-    let icon =
-      price >= result.previousClose ? Notion.icon.UP : Notion.icon.DOWN;
+    let diff = Number(price) - Number(result.previousClose);
+
     item.properties[FIELD_NAME_PRICE].number = parseFloat(price);
     let props = {};
     props[FIELD_NAME_PRICE] = item.properties[FIELD_NAME_PRICE];
-    await Notion.updateStock(item.id, icon, props);
+    await Notion.updateStock(item.id, diff, props);
   });
 })();
 
